@@ -1,7 +1,6 @@
 from whoosh.index import create_in
 from whoosh.fields import TEXT, ID, Schema
 import os
-import re
 
 def create_index(schema, index_dir):
     if not os.path.exists(index_dir):
@@ -9,26 +8,20 @@ def create_index(schema, index_dir):
     index = create_in(index_dir, schema)
     return index
 
-def extract_title_and_text(content):
-    # Use a regular expression to extract title and text
-    match = re.search(r'\[\[(.+?)\]\]\s*([\s\S]*)', content)
-    if match:
-        title, text = match.groups()
-        return title.strip(), text.strip()
-    return None, None
-
 def index_wikipedia_data(index, data_folder):
     writer = index.writer()
-
+    k = 0
     for file_name in os.listdir(data_folder):
-        with open(os.path.join(data_folder, file_name), 'r', encoding='UTF-8') as file:
+        k = k + 1
+        print(f"Processing file: {file_name}")
+        print(k)
+        with open(os.path.join(data_folder, file_name), 'r', encoding='latin-1') as file:
             content = file.read()
-
-            # Extract title and text
-            title, text = extract_title_and_text(content)
-
-            if title and text:
-                # Add document to the index
+            articles = content.split('[[')[1:]  # Split the content into articles
+            for article in articles:
+                title_end = article.find(']]')
+                title = article[:title_end].strip()
+                text = article[title_end + 2:].strip()
                 writer.add_document(title=title, content=text)
 
     writer.commit()

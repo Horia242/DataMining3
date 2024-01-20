@@ -23,8 +23,8 @@ if __name__ == "__main__":
 
     index = open_dir(index_dir)
 
-    query = "The name of this largest Moroccan city combines 2 Spanish words"
-    category = "AFRICAN CITIES"
+    query = "a religious group that originated in 1955 from a schism in the Davidian Seventh-day Adventists (\"Davidians\")"
+    category = "Christian denominations established in the 20th century"
 
     result = retrieve_best_page(index, query, category)
 

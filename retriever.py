@@ -20,15 +20,32 @@ def retrieve_best_page(index, query, category=None):
 
 if __name__ == "__main__":
     index_dir = "index"
-
     index = open_dir(index_dir)
 
-    query = "a religious group that originated in 1955 from a schism in the Davidian Seventh-day Adventists (\"Davidians\")"
-    category = "Christian denominations established in the 20th century"
+    with open("new_questions.txt", "r") as file:
+        lines = file.readlines()
 
-    result = retrieve_best_page(index, query, category)
+    correct_count = 0
+    total_count = 0
 
-    if result:
-        print(f"The best matching Wikipedia page is: {result}")
-    else:
-        print("No matching page found.")
+    for i in range(0, len(lines), 4):
+        category = lines[i].strip()
+        query = lines[i+1].strip()
+        expected_result = lines[i+2].strip()
+
+        result = retrieve_best_page(index, query, category)
+
+        print(f"Category: {category}")
+        print(f"Query: {query}")
+        print(f"Expected Result: {expected_result}")
+
+        total_count += 1
+        if result == expected_result:
+            print(f"Result: {result} - Correct!")
+            correct_count += 1
+        else:
+            print(f"Result: {result} - Incorrect!")
+
+        print("=" * 40)
+
+    print(f"\nP@1: {(correct_count/total_count)*100}%")
